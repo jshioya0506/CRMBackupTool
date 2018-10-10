@@ -1,0 +1,11 @@
+﻿  dbBackupToolMain.cpp
+c:\users\wataru\documents\visual studio 2015\projects\nexus_crm\nexus_crm\dbbackuptoolmain.cpp(23): error C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: 'sprintf' の宣言を確認してください
+  DataModel.cpp
+  DataAccessObject.cpp
+c:\users\wataru\documents\visual studio 2015\projects\nexus_crm\nexus_crm\dataaccessobject.cpp(50): error C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: 'sprintf' の宣言を確認してください
+c:\users\wataru\documents\visual studio 2015\projects\nexus_crm\nexus_crm\dataaccessobject.cpp(53): error C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: 'sprintf' の宣言を確認してください
+  コードを生成中...
+c:\users\wataru\documents\visual studio 2015\projects\nexus_crm\nexus_crm\datamodel.cpp(20): error C4716: 'DataModel': 値を返さなければいけません
