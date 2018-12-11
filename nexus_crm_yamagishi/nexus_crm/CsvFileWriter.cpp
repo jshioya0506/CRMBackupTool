@@ -1,17 +1,17 @@
-#include "stdafx.h"
-#include <stdio.h>
-#include <winsock.h>
-#include <mysql.h>
-#include <string>
+#include "CsvFileWriter.h"
 
-#include <fstream>
-using namespace std;
+/* コンストラクタ */
+CsvFileWriter::CsvFileWriter()
+{
+}
 
-/* ファイルストリーム */
-fstream m_fs;
+/* デストラクタ */
+CsvFileWriter::~CsvFileWriter()
+{
+}
 
-/* ファイルを開く */
-int file_open(string fileName) {
+/* ファイルオープン関数 */
+int CsvFileWriter::file_open(string fileName) {
 
 	m_fs.open(fileName, ios::out);
 	if (!m_fs.is_open()) {
@@ -20,14 +20,14 @@ int file_open(string fileName) {
 	return EXIT_SUCCESS;
 }
 
-/* ファイルを閉じる */
-int file_close() {
+/* ファイルクローズ関数 */
+int CsvFileWriter:: file_close() {
 	m_fs.close();
 	return EXIT_SUCCESS;
 }
 
-/* ファイル出力 */
-void output_employee_csv(string csv_row_str) {
+/* ファイル出力関数 */
+void CsvFileWriter:: output_employee_csv(string csv_row_str) {
 
 	/* テーブルの1レコード分の内容をカンマ区切りでCSV出力 */
 	m_fs << csv_row_str << endl;

@@ -1,31 +1,16 @@
-#include "stdafx.h"
-#include <stdio.h>
-#include <winsock.h>
-#include <mysql.h>
-#include <string>
-#include <vector>
+#include "DataModel.h"
 
-#include <fstream>
+/* コンストラクタ */
+DataModel::DataModel()
+{
+}
 
-using namespace std;
+/* デストラクタ */
+DataModel::~DataModel()
+{
+}
 
-void output_employee_csv(string csv_row_str); // ファイル出力を行う必要があるためプロトタイプ宣言
-
-typedef struct Item {
-	string EMPNO;       //int型のEMPNO
-	string EMPNO_ED;       //int型のEMPNO_ED
-	string LIMTYMD;       //int型のLIMTYMD
-	string NAME;       //char型のNAME
-	string ENTRYMD;       //int型のENTRYMD
-	string RETRYMD;       //int型のRETRYMD
-	string PASSWORD;       //char型のPASSWORD
-	string LOSTYMD;       //int型のLOSTYMD
-	string UPDATEMD;       //int型のUPDATEMD
-} Item;
-
-vector<Item>dataList;
-
- void inDataModel(string inData[]){ // データ格納
+ void DataModel::inDataModel(string inData[]){ // データ格納
 	
 	Item a;
 
@@ -44,8 +29,9 @@ vector<Item>dataList;
 	return ;
 }
 
- void outDataModel(int dataNum) { // データ排出
+ void DataModel::outDataModel(int dataNum) { // データ排出
 
+	 CsvFileWriter csvFileWriter;
 	 string csvData = "";
 
 	 csvData = dataList[dataNum].EMPNO;
@@ -58,7 +44,7 @@ vector<Item>dataList;
 	 csvData = csvData + "," + dataList[dataNum].LOSTYMD;
 	 csvData = csvData + "," + dataList[dataNum].UPDATEMD;
 
-	 output_employee_csv(csvData);
+	 csvFileWriter.output_employee_csv(csvData);
 
 	 return ;
  }

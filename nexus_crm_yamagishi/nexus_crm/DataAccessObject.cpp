@@ -1,78 +1,71 @@
-#include "stdafx.h"
-#include <stdio.h>
-#include <winsock.h>
-#include <mysql.h>
-#include <string>
-
-#include <fstream>
-using namespace std;
-
-void output_employee_csv(string csv_row_str); // ファイル出力を行う必要があるためプロトタイプ宣言
-
-void inDataModel(string inData[]); // データ格納
-void outDataModel(int dataNum); // データ排出
-
-
-/* MySQL用の構造体 */
-MYSQL* mysql;
-MYSQL_RES* res;
-MYSQL_FIELD* field;
-MYSQL_ROW row;
+#include "DataAccessObject.h"
 
 /* データベース情報 */
-const char host[] = "127.0.0.1";               /* 接続先 */
-const char user[] = "root";                    /* ユーザ名 */
-const char password[] = "kiritori";            /* パスワード */
-const char dbname[] = "nexus_crm";             /* データベース名 */
-const char sqlSelect[] = "SELECT * FROM ";   /* 参照系 */
-const char sqlTable[] = "EMPLOYEE";   /* 参照テーブル */
+const char host[] = "127.0.0.1";			/* 接続先 */
+const char user[] = "root";					/* ユーザ名 */
+const char password[] = "kiritori";			/* パスワード */
+const char dbname[] = "nexus_crm";			/* データベース名 */
+const char sqlSelect[] = "SELECT * FROM ";	/* 参照系 */
+const char sqlTable[] = "EMPLOYEE";			/* 参照テーブル */
 
+/* 職員テーブル(EMPLOYEE) のフィールド */
+string m_employee_fields[] = { "EMPNO","EMPNO_ED","LIMTYMD","NAME","ENTRYMD","RETRYMD","PASSWORD","LOSTYMD","UPDATE" };
 
-	/* DBを開く(接続する) */
-	int db_open() {
-		/* 初期化処理 */
-		mysql = mysql_init(0);
+/* コンストラクタ */
+DataAccessObject::DataAccessObject()
+{
+}
 
-		/* MySQLに接続 */
-		if (mysql_real_connect(mysql, host, user, password, dbname, MYSQL_PORT, NULL, 0) == NULL) {
-			printf("%s\n", mysql_error(mysql));
-			return -1;
-		}
-		return 0;
+/* デストラクタ */
+DataAccessObject::~DataAccessObject()
+{
+}
+
+/* DBオープン関数 */
+int DataAccessObject::db_open() {
+	/* 初期化処理 */
+	mysql = mysql_init(0);
+
+	/* MySQLに接続 */
+	if (mysql_real_connect(mysql, host, user, password, dbname, MYSQL_PORT, NULL, 0) == NULL) {
+		printf("%s\n", mysql_error(mysql));
+		return -1;
 	}
+	return 0;
+}
 
-	/* DBを閉じる(切断する) */
-	int db_close() {
-		/* MySQLから切断 */
-		mysql_close(mysql);
-		return 0;
-	}
+/* DBクローズ関数 */
+int DataAccessObject :: db_close() {
+	/* MySQLから切断 */
+	mysql_close(mysql);
+	return 0;
+}
 
 /* 職員テーブル(EMPLOYEE)を検索してCSV出力 */
-int select_employee() {
+int DataAccessObject:: select_employee() {
 	char sql[200];
 	sprintf_s(sql, 200, "%s%s", sqlSelect, sqlTable); // テーブル選択文の作成
 
+	CsvFileWriter csvFileWriter;
+	DataModel dataModel;
+
 	/* SQLの発行 */
 	if (mysql_query(mysql, sql) != 0) {
-		printf("%s\n", mysql_error(mysql));
 		mysql_close(mysql);
-		return -1;
+		return EXIT_FAILURE;
 	}
 
 	/* MySQLからデータを取得 */
 	res = mysql_store_result(mysql);
+
 	if (res == NULL) {
 		char tableBuf[200];
 		sprintf_s(tableBuf, 200, "%sからのデータ読込に失敗しました。", sqlTable);
 		printf("%s\n", mysql_error(mysql));
 		mysql_close(mysql);
 		MessageBox(NULL, tableBuf, "エラー", MB_OK); // テーブルからデータの読み込みに失敗。
-		return -1;
+		return EXIT_FAILURE;
 	}
-
-	/* 職員テーブル(EMPLOYEE) のフィールド */
-	string m_employee_fields[] = { "EMPNO","EMPNO_ED","LIMTYMD","NAME","ENTRYMD","RETRYMD","PASSWORD","LOSTYMD","UPDATE"};
 
 	///* フィールド数を取得 */
 	int num_fields = sizeof m_employee_fields / sizeof m_employee_fields[0];
@@ -93,7 +86,7 @@ int select_employee() {
 			snprintf(buffer, sizeof(buffer), "%s", row[i]);
 			csv_row_str[i] = buffer;
 		}
-		inDataModel(csv_row_str);
+		dataModel.inDataModel(csv_row_str);
 		rowNNum++;
 	}
 
@@ -101,7 +94,7 @@ int select_employee() {
 
 	/* ヘッダ部CSV記入 */
 	for (int j = 0; j < num_fields; j++) {
-		if (j == 0) {
+		if (0 == j) {
 			headTitle = m_employee_fields[j];
 		}
 		else {
@@ -109,11 +102,12 @@ int select_employee() {
 		}
 	}
 
-	output_employee_csv(headTitle);
+	csvFileWriter.output_employee_csv(headTitle);
 
 	/* 行数だけCSV排出 */
 	for (int index = 0; index < rowNNum; index++) {
-		outDataModel(index);
+		dataModel.outDataModel(index);
 	}
-	return 0;
+
+	return EXIT_SUCCESS;
 }
